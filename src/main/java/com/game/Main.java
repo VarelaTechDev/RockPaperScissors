@@ -27,6 +27,8 @@ public class Main {
 
         playGame(numberOfRounds);
         printResult();
+
+        scanner.close();
     }
 
     private void setVictoryConditions() {
@@ -43,26 +45,27 @@ public class Main {
 
     private void setNumberOfRounds() {
         System.out.printf("Between %d - %d, how many rounds would you like to play? ", minRound, maxRound);
+
         try {
             numberOfRounds = scanner.nextInt();
 
             if (numberOfRounds < minRound || numberOfRounds > maxRound) throw new IndexOutOfBoundsException();
 
-        }
-        // Prevent OutOfBounds and if the user types a non-integer value WE EXIT THE PROGRAM
-        catch (Exception e) {
-            // Go here if we enter something invalid
+        } catch (Exception e) {
             System.out.printf("Error: Invalid input! Only NATURAL NUMBERS from %d - %d. Closing the program!\n", minRound, maxRound);
             System.exit(0);
         }
+
+        scanner.nextLine(); // Consume the newline!
     }
-    private void playGame(int numberOfRounds){
+
+    private void playGame(int numberOfRounds) {
         int userChoice, computerChoice;
 
-        for(int i = 1; i <= numberOfRounds; i++){
+        for (int i = 1; i <= numberOfRounds; i++) {
             printChoices();
 
-            userChoice = scanner.nextInt();
+            userChoice = verifyUserChoice();
             computerChoice = random.nextInt(3);
 
             System.out.printf("Round: %d\t", i);
@@ -71,36 +74,59 @@ public class Main {
             determineWinner(userChoice, computerChoice);
         }
     }
-    private void printResult(){
+
+    private int verifyUserChoice(){
+        boolean isValidInput = false;
+        int userChoice = -1;
+        
+        while(!isValidInput){
+            String userInput = scanner.nextLine();
+            try{
+                userChoice = Integer.parseInt(userInput);
+
+                if(userChoice < 0 || userChoice > choices.length){
+                    printChoices();
+                }
+                else{
+                    isValidInput = true;
+                }
+            }
+            catch (NumberFormatException e){
+                printChoices();
+            }
+        }
+        
+        return userChoice;
+    }
+
+    private void printResult() {
         System.out.println("=========================");
 
         System.out.printf("Number of ties: %d\nNumber of %s wins: %d\nNumber of %s wins: %d\n", numberOfTies, humanName, humanWins, computerName, computerWins);
 
-        if(humanWins > computerWins) System.out.printf("Winner: %s\n", humanName);
-        else if(computerWins > humanWins) System.out.printf("Winner: %s\n", computerName);
+        if (humanWins > computerWins) System.out.printf("Winner: %s\n", humanName);
+        else if (computerWins > humanWins) System.out.printf("Winner: %s\n", computerName);
         else System.out.println("Tie");
 
         System.out.println("=========================");
     }
 
-    private void printChoices(){
+    private void printChoices() {
         System.out.printf("Type a number corresponding with your choice: ", choices.length);
-        for(int i = 0; i < choices.length; i++){
+        for (int i = 0; i < choices.length; i++) {
             System.out.printf("%d = %s\t", i + 1, choices[i]);
         }
         System.out.printf(": ");
     }
 
-    private void determineWinner(int userChoice, int computerChoice){
-        if(userChoice == computerChoice){
+    private void determineWinner(int userChoice, int computerChoice) {
+        if (userChoice == computerChoice) {
             System.out.println("Tie");
             numberOfTies++;
-        }
-        else if(victoryMap.get(userChoice) == computerChoice){
+        } else if (victoryMap.get(userChoice) == computerChoice) {
             System.out.printf("%s won\n", humanName);
             humanWins++;
-        }
-        else{
+        } else {
             System.out.printf("%s won\n", computerName);
             computerWins++;
         }
