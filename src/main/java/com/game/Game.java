@@ -120,7 +120,7 @@ public class Game {
     }
 
     private void printChoices() {
-        System.out.printf("Type a number corresponding with your choice: ", CHOICES.length);
+        System.out.print("Type a number corresponding with your choice: ");
         for (int i = 0; i < CHOICES.length; i++) {
             System.out.printf("%d = %s\t", i, CHOICES[i]);
         }
